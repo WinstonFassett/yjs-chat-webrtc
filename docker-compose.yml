@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_SIGNALING_SERVERS=${VITE_SIGNALING_SERVERS}
+    environment:
+      - VITE_SIGNALING_SERVERS=${VITE_SIGNALING_SERVERS}
+    ports:
+      - "80:80"
+  signaling:
+    build:
+      context: .
+      dockerfile: Dockerfile.webrtc
+    ports:
+      - "4444:4444"

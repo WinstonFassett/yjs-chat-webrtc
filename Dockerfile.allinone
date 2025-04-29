@@ -1,0 +1,20 @@
+# --- All-in-one: Frontend + y-webrtc ---
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY . .
+ARG VITE_SIGNALING_SERVERS=ws://localhost:4444
+ENV VITE_SIGNALING_SERVERS=$VITE_SIGNALING_SERVERS
+RUN npm install && npm run build
+
+FROM node:18-alpine AS prod
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./
+RUN npm install -g serve y-webrtc
+
+# Inline entrypoint script
+RUN echo '#!/bin/sh\necho "VITE_SIGNALING_SERVERS is: $VITE_SIGNALING_SERVERS"\nserve -s /app/dist -l 80 &\nPORT=4444 npx y-webrtc' > /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+EXPOSE 80 4444
+CMD ["/app/entrypoint.sh"]

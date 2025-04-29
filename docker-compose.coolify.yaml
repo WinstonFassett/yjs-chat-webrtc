@@ -1,0 +1,24 @@
+# documentation: https://github.com/yjs/yjs-demos/tree/master/webrtc-chat
+# slogan: Collaborative Chat Demo using Yjs and WebRTC
+# tags: yjs, webrtc, chat, collaboration, realtime
+# logo: svgs/yjs.svg
+# port: 80
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_SIGNALING_SERVERS=${VITE_SIGNALING_SERVERS}
+    environment:
+      - SERVICE_FQDN_FRONTEND_80
+      - VITE_SIGNALING_SERVERS=${VITE_SIGNALING_SERVERS}
+    labels:
+      - traefik.http.middlewares.authentik-auth@file
+  signaling:
+    build:
+      context: .
+      dockerfile: Dockerfile.webrtc
+    environment:
+      - SERVICE_FQDN_SIGNALING_4444

@@ -1,0 +1,5 @@
+# --- y-webrtc signaling server only ---
+FROM node:18-alpine
+RUN npm install -g y-webrtc
+EXPOSE 4444
+CMD ["npx", "y-webrtc", "--port", "4444"]
